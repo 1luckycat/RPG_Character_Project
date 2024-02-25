@@ -13,13 +13,14 @@ export class Character {
         public description?: string
     ) {
         this._id = uuidv4();
+        this.weaponArray = this.weaponArray
     }
 
     get id(): string {
         return this._id
     }
-
-
+    
+    // method to display weapons in the character card
     public showWeapons = () => {
         return this.weaponArray.map( weapon => {         // .map is similar to forEach
             return `
@@ -36,6 +37,8 @@ export class Character {
     })}
 
 }
+
+
 
 export class Weapon{
     
@@ -64,9 +67,10 @@ export class Weapon{
 }
 
 
+
 export class TaskManager implements Managing<Character | string | Weapon> {
     public characters: Character[] = [];
-    public weaponArray: Weapon[] = [];
+    
 
     public addCharacter(chara: Character): void{
         this.characters.push(chara);
@@ -105,12 +109,13 @@ export class TaskManager implements Managing<Character | string | Weapon> {
                 </div>
             
             `
-            // in Weapons: can add a method to display each weapon ^ or write another for loop inside there
+            // in card Weapons: can add a method to display each weapon ^ or write another for loop inside there
             
             container.insertAdjacentHTML('beforeend', charaCard)
 
         });
 
+        // this makes all 'remove character' buttons do the same thing
         let allCharRemove = container.querySelectorAll('.btn-danger')
         
         allCharRemove.forEach( button => {
@@ -123,6 +128,7 @@ export class TaskManager implements Managing<Character | string | Weapon> {
         })
 
 
+        // this makes all 'remove weapon' buttons do the same thing
         let allWeaponRemove = container.querySelectorAll('.btn-danger')
         
         allWeaponRemove.forEach( button => {
@@ -137,6 +143,7 @@ export class TaskManager implements Managing<Character | string | Weapon> {
     }
 
 
+    // update weapon into character by looping thru array of characters by their id
     public updateWeapon(weapon: Weapon, charaId: string):void {
         for (let character of this.characters) {
             if (character.id === charaId) {
@@ -148,12 +155,21 @@ export class TaskManager implements Managing<Character | string | Weapon> {
     }
 
 
+    // remove weapon from a specific character's weapon list by looping thru character array and finding index of weapon in the weapon array
     public removeWeapon(weapId: string):void {
-        const index1 = this.weaponArray.findIndex((weapon) => weapon.weaponId === weapId)
-        console.log(index1)
+        
+        // Old code - was only getting an empty array
+        // const index1 = this.weaponArray.findIndex((weapon) => weapon.weaponId === weapId)
+        // console.log(index1)
 
-        if (index1 !== -1){
-            this.weaponArray.splice(index1, 1)
+
+        for ( let i of this.characters) {
+            const index1 = i.weaponArray.findIndex((weapon) => weapon.weaponId === weapId)
+            console.log(index1)
+            
+            if (index1 !== -1){
+                i.weaponArray.splice(index1, 1)
+            }
         }
 
         this.updateCharaList();
